@@ -14,7 +14,7 @@ class chart:
         self.type = chart_type
         self.type = "scatter"
 
-        from viz.display.chart_config import _chart_settings
+        from vizard.display.chart_config import _chart_settings
         default_settings = _chart_settings
         default_settings["lines"] = []
 
@@ -54,7 +54,7 @@ class chart:
     def plot(self, bundle=None, twinx=False, show=True, **kwargs):
         """ Plot a single x,y dataset. """
         #print len(self.datasets)
-        import viz.display.chart_config as cc
+        import vizard.display.chart_config as cc
         
         if kwargs != None:
             for d_set in self.datasets:
@@ -147,7 +147,7 @@ class chart:
         if x.size == 1:
             x = list(range(len(y)))
 
-        point = ax.plot(x, y, y_params["mode"], ms=y_params["mark_size"], label=self.settings["legend"]["point"])
+        point = ax.plot(x, y, y_params["mode"], ms=y_params["mark_size"])#, label=self.settings["legend"]["point"])
         marks["point"] = point
 
         if self.settings["regression"] != None:
@@ -532,4 +532,4 @@ class chart:
         y_new = [y_new[i] for i in indices]
         x_new = [x_new[i] for i in indices]
 
-        return x_new, y_new
+        return x_new, y_ne

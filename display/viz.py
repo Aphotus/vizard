@@ -5,14 +5,19 @@ Created on Thu Oct 24 22:18:03 2013
 @author: Evin
 """
 
-from wand import wand
-
-class vizard:
+class viz:
     """ Automatically detects type of data sources and plots them. """
 
     def __init__(self, files, subsets=None):
-        """ Initializes the Vizard object. """
-        import viz.util.file_io as fio
+        """ Initializes the viz object. """
+        import vizard.util.file_io as fio
+
+        # Need to keep track of:
+        #~  File names of the data sources [data_source.ext, ...]
+        #~  Names of the variables contained in each data source { variable.data_source: data_source.ext }
+        #       Always display 'variable' name unless two variables with the same name.
+        #       In that case, 'variable.data_source'
+        #       Any variable can always be uniquely referenced by 'variable.data_source'.
 
         self.files = {}
         self.sources = {}
@@ -47,8 +52,12 @@ class vizard:
                         self.variables[v] = variables[v]
 
         else:
-            f = files
-            delim = delimiters
+            if type(files) == tuple:
+                    f, delim = files
+            else:
+                f = files
+                delim = ','
+
             variables, file_name = fio.read(f, delimiter=delim, subset=subsets)
             self.files[file_name] = variables
 
@@ -57,9 +66,9 @@ class vizard:
                 self.variables[v] = variables[v]
 
     def __getitem__(self, key=None):
-        from viz.display.chart import chart
-        from viz.display.chart_manager import chart_manager
-        from viz.dataset import dataset
+        from vizard.display.chart import chart
+        from vizard.display.chart_manager import chart_manager
+        from vizard.dataset import dataset
 
         if key == None:
             print("Nothing to return.")
@@ -102,16 +111,12 @@ class vizard:
                     i_vars = self._get_data(x)
                     d_vars = self._get_data(y)
 
-                    datasets = []
-                    #sources = [self.sources[key] for key in (x,y)]
-
                     diff = len(d_vars) - len(i_vars)
                     if diff > 0:
                         i_vars += [i_vars[-1]] * diff
-                    for x_, y_ in zip(i_vars, d_vars):
-                        ##print x_
-                        ##print y_
 
+                    datasets = []
+                    for x_, y_ in zip(i_vars, d_vars):
                         sources = [self.sources[key] for key in (x_.name, y_.name)]
                         datasets.append(dataset(x_, y_, sources))
                
@@ -155,3 +160,8 @@ class vizard:
                     print "Wrong name was:", name
 
         return data
+
+if __name__ == "__main__":
+    from chart import chart
+
+    print "Hi"

@@ -1,1 +1,1 @@
-__all__ = ["plot"]
+__all__ = ["chart", "chart_manager", "viz"]
