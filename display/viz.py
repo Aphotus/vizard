@@ -80,7 +80,6 @@ class viz:
             #~ This is kind of a hack...
             import pandas as pd
             d_vars = self.variables[key]
-            #i_vars = pd.Series(range(len(d_vars)))
             source = self.sources[key]
 
             return chart_manager([dataset(Y=d_vars, sources=[source])])

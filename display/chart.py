@@ -117,11 +117,14 @@ class chart:
         x_params = bundle["x"]
         y_params = bundle["y"]
 
+        # If no 'data' was sent directly to the function,
+        ## use the only 'dataset' available.
         if data == None:
             d_set = self.datasets[0]
             x = d_set.X.values
             y = d_set.Y.values
 
+        # Else, use the 'data' sent to the function.
         else:
             x = data.X.values
             y = data.Y.values
@@ -144,17 +147,32 @@ class chart:
                 else:
                     ax.fill_between(x, y, fill_min, color=y_params["fill_color"], hatch=y_params["fill_hatch"], linewidth=1, alpha=y_params["fill_alpha"])
 
+        # Reformat 'x' if it contains only one element.
         if x.size == 1:
             x = list(range(len(y)))
 
         point = ax.plot(x, y, y_params["mode"], ms=y_params["mark_size"])#, label=self.settings["legend"]["point"])
         marks["point"] = point
 
+        #~*
+        # Might futher sub-divide 'xy_plots' so that fills, splines, and regressions happen in their own functions.
+        #~*
         if self.settings["regression"] != None:
             x, y, m = self.settings["regression"]
-            regression, = ax.plot(x, y, 'b--', label=self.settings["legend"]["regression"])
+
+            if self.settings["legend"] == None:
+                label = "Linear Regression"
+            else:
+                label = self.settings["legend"]["regression"]
+
+            regression, = ax.plot(x, y, 'b--', label=label)
             marks["regression"] = regression
             x_mid, y_mid = x[x.size//20], y[y.size//20]
+
+            #~*
+            # This line is very, very specific to long-tailed distributions
+            # with exponential decay.
+            #~*
             ax.annotate('$f(x) \\sim x^{-\\alpha}$; $\\alpha='+str(round(m,3))+'$',
                 xy=(x_mid, y_mid),
                 xytext=(x_mid-(ax.get_xlim()[1]-ax.get_xlim()[0])/4, y_mid-(ax.get_xlim()[1]-ax.get_ylim()[0])/6),
@@ -532,4 +550,4 @@ class chart:
         y_new = [y_new[i] for i in indices]
         x_new = [x_new[i] for i in indices]
 
-        return x_new, y_ne
+        return x_new, y_new
